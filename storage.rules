@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Matches the "receipts" folder in your bucket: mathaka-handiya-official
+    match /receipts/{allPaths=**} {
+      
+      // CREATE: Allow any student to upload their payment proof
+      // Limits file size to 5MB and allows only Images or PDFs
+      allow create: if request.resource.size < 5 * 1024 * 1024
+                   && (request.resource.contentType.matches('image/.*') 
+                   || request.resource.contentType == 'application/pdf');
+      
+      // READ/UPDATE/DELETE: Restricted to authenticated users (Admins)
+      // Only you/admins can view these receipts to verify the payment
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}

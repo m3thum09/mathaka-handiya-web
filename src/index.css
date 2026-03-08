@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Cross-Browser Compatibility & Performance Layer */
+
+@layer base {
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box; /* Ensures proper layout */
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: #05050a;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Root Container Fix */
+  #root {
+    width: 100%; /* Using 100% instead of 100vw is safer */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative; /* Ensures proper layering of the site */
+  }
+
+  /* Essential UI Reset */
+  *:focus, *:active, *:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Optimized Media Elements */
+  img, video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* GPU Acceleration */
+.transform-gpu {
+  transform: translate3d(0, 0, 0); /* ✅ translateZ(0) is less effective than translate3d */
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}

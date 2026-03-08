@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Function to check if the user is a verified Admin
+    // Works only if the user is logged in via Firebase Auth
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    match /reservations/{reservation} {
+      // Allow any user to query for a single email (for Duplicate Check)
+      // Necessary to avoid "Error sending OTP" messages on the registration form
+      allow list: if isAdmin() || request.query.limit <= 1;
+
+      // Only verified Admins can read (get) or update individual reservation documents
+      allow get, update: if isAdmin();
+
+      // Allow registration only for verified SLTC email addresses
+      // Validates email domain, ticket amount, and initial status
+      allow create: if (
+        (request.resource.data.email.matches('.*@sltc\\.ac\\.lk$') || 
+         request.resource.data.email.matches('.*@sltc\\.edu\\.lk$')) &&
+        request.resource.data.amount in [1000, 2000] && 
+        request.resource.data.status == 'pending'
+      );
+
+      // Strictly prohibit data deletion for security and auditing purposes
+      allow delete: if false;
+    }
+
+    match /admins/{adminEmail} {
+      // Allow a logged-in Admin to read their own data record
+      allow read: if request.auth != null && request.auth.token.email == adminEmail;
+      
+      // Prevent any modification to the admin list via client-side code
+      allow write: if false;
+    }
+  }
+}

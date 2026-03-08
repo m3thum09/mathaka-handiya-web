@@ -18,7 +18,7 @@ interface ReservationData {
 
 export const ReservationForm = ({ onClose }: { onClose: () => void }) => {
   // 'true' to stop ticket sales, 'false' to reopen
-  const isSoldOut = false; 
+  const isSoldOut = true; 
 
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);

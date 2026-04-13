@@ -1,0 +1,9 @@
+# Compiled output
+lib/
+
+# Dependencies
+node_modules/
+
+# Local env
+.env
+.env.local
